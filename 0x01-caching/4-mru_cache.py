@@ -14,6 +14,7 @@ class MRUCache(BaseCaching):
         __keys (list): Stores cache keys from least to most accessed
         __rlock (RLock): Lock accessed resources to prevent race condition
     """
+
     def __init__(self):
         """ Instantiation method, sets instance attributes
         """

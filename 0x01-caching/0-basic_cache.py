@@ -11,6 +11,7 @@ class BasicCache(BaseCaching):
     Attributes:
         MAX_ITEMS: number of items that can be store in the cache
     """
+
     def put(self, key, item):
         """ Add an item in the cache
         """

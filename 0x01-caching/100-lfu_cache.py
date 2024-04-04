@@ -14,6 +14,7 @@ class LFUCache(BaseCaching):
         __stats (list): A dictionary of cache keys for access count
         __rlock (RLock): Lock accessed resources to prevent race condition
     """
+
     def __init__(self):
         """ Instantiation method, sets instance attributes
         """

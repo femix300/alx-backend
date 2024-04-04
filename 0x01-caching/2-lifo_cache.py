@@ -14,6 +14,7 @@ class LIFOCache(BaseCaching):
         __keys (list): Stores cache keys in order of entry using `.append`
         __rlock (RLock): Lock accessed resources to prevent race condition
     """
+
     def __init__(self):
         """ Instantiation method, sets instance attributes
         """
