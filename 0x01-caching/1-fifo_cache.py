@@ -1,9 +1,10 @@
 #!/usr/bin/python3
-"""FIFO Cache Replacement Implementation Class
+"""Implements a FIFO Caching class
 """
 from threading import RLock
 
-BaseCaching = __import__('base_caching').BaseCaching
+from base_caching import BaseCaching
+from collections import OrderedDict
 
 
 class FIFOCache(BaseCaching):
@@ -19,34 +20,25 @@ class FIFOCache(BaseCaching):
         """ Instantiation method, sets instance attributes
         """
         super().__init__()
-        self.__keys = []
-        self.__rlock = RLock()
+        self.cache_data = OrderedDict()
 
     def put(self, key, item):
-        """ Add an item in the cache
+        """ Puts an item in the cache
+            Dicards and item using the FIFO algorithm
         """
-        if key is not None and item is not None:
-            keyOut = self._balance(key)
-            with self.__rlock:
-                self.cache_data.update({key: item})
-            if keyOut is not None:
-                print('DISCARD: {}'.format(keyOut))
+        if key and item:
+            if key not in self.cache_data:
+                if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
+                    first_key, _ = self.cache_data.popitem(False)
+                    print('DISCARD: {}'.format(first_key))
+                self.cache_data[key] = item
+                self.cache_data.move_to_end(key, last=True)
+
+            else:
+                self.cache_data[key] = item
 
     def get(self, key):
-        """ Get an item by key
-        """
-        with self.__rlock:
-            return self.cache_data.get(key, None)
-
-    def _balance(self, keyIn):
-        """ Removes the oldest item from the cache at MAX size
-        """
-        keyOut = None
-        with self.__rlock:
-            if keyIn not in self.__keys:
-                keysLength = len(self.__keys)
-                if len(self.cache_data) == BaseCaching.MAX_ITEMS:
-                    keyOut = self.__keys.pop(0)
-                    self.cache_data.pop(keyOut)
-                self.__keys.insert(keysLength, keyIn)
-        return keyOut
+        '''
+        Gets an item from the cache
+        '''
+        return self.cache_data.get(key, None)
