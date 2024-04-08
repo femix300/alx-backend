@@ -1,30 +1,24 @@
 #!/usr/bin/python3
 """Implements a FIFO Caching class
 """
-from threading import RLock
-
 from base_caching import BaseCaching
 from collections import OrderedDict
 
 
 class FIFOCache(BaseCaching):
     """
-    An implementation of FIFO(First In Fisrt Out) Cache
-
-    Attributes:
-        __keys (list): Stores cache keys in order of entry using `.append`
-        __rlock (RLock): Lock accessed resources to prevent race condition
+    Implements a caching class using the LIFO algorithm
     """
 
     def __init__(self):
-        """ Instantiation method, sets instance attributes
+        """ Instantiation method
         """
         super().__init__()
         self.cache_data = OrderedDict()
 
     def put(self, key, item):
         """ Puts an item in the cache
-            Dicards and item using the FIFO algorithm
+            Dicards an item using the FIFO algorithm
         """
         if key and item:
             if key not in self.cache_data:
