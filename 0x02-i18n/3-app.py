@@ -21,8 +21,7 @@ app.config.from_object(Config)
 @app.route('/')
 def index():
     '''calls render template on the html file'''
-    return render_template('3-index.html', home_title=_('home_title'),
-                           home_header=_('home_header'))
+    return render_template('3-index.html')
 
 
 @babel.localeselector
