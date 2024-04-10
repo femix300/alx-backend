@@ -1,41 +1,48 @@
 #!/usr/bin/env python3
-'''Basic Babel setup'''
-from flask import Flask, render_template, request
-from flask_babel import Babel, _
+"""
+A Basic flask application
+"""
+from flask import Flask
+from flask import request
+from flask import render_template
+from flask_babel import Babel
 
 
-app = Flask(__name__)
-babel = Babel(app)
-
-
-class Config:
-    '''A config class'''
-    LANGUAGES = ["en", "fr"]
+class Config(object):
+    """
+    Application configuration class
+    """
+    LANGUAGES = ['en', 'fr']
     BABEL_DEFAULT_LOCALE = 'en'
     BABEL_DEFAULT_TIMEZONE = 'UTC'
 
 
+# Instantiate the application object
+app = Flask(__name__)
 app.config.from_object(Config)
 
-
-@app.route('/')
-def index():
-    '''calls render template on the html file'''
-    return render_template('3-index.html', home_title=_('home_title'),
-                           home_header=_('home_header'))
+# Wrap the application with Babel
+babel = Babel(app)
 
 
 @babel.localeselector
-def get_locale():
-    '''
-    Determine the best match between supported languages
-    '''
-    if 'locale' in request.args:
-        locale = request.args['locale']
-        if locale in app.config['LANGUAGES']:
-            return locale
+def get_locale() -> str:
+    """
+    Gets locale from request object
+    """
+    locale = request.args.get('locale', '').strip()
+    if locale and locale in Config.LANGUAGES:
+        return locale
     return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 
+@app.route('/', strict_slashes=False)
+def index() -> str:
+    """
+    Renders a basic html template
+    """
+    return render_template('4-index.html')
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
