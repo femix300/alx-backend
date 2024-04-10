@@ -10,5 +10,5 @@ def index():
     '''calls render template on the html file'''
     return render_template('0-index.html')
 
-
-app.run(debug=True)
+if __name__ == '__main':
+    app.run(debug=True)
