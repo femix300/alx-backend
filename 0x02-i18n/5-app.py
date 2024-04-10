@@ -19,6 +19,10 @@ app.config.from_object(Config)
 
 
 def get_user():
+    '''
+    a get_user function that returns a user dictionary or None if
+    the ID cannot be found or if login_as was not passed.
+    '''
     login_as = request.args.get('login_as')
     if login_as:
         user = users.get(int(login_as))
@@ -28,6 +32,10 @@ def get_user():
 
 @app.before_request
 def before_request():
+    '''
+    a before_request function and use the app.before_request decorator
+    to make it be executed before all other functions.
+    '''
     g.user = get_user()
 
 
