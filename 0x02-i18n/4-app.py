@@ -18,7 +18,7 @@ class Config:
 app.config.from_object(Config)
 
 
-@app.route('/')
+@app.route('/', strict_slashes=False)
 def index():
     '''calls render template on the html file'''
     return render_template('4-index.html', home_title=_('home_title'),
