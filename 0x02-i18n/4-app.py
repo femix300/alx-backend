@@ -19,14 +19,14 @@ app.config.from_object(Config)
 
 
 @app.route('/', strict_slashes=False)
-def index():
+def index() -> str:
     '''calls render template on the html file'''
     return render_template('4-index.html', home_title=_('home_title'),
                            home_header=_('home_header'))
 
 
 @babel.localeselector
-def get_locale():
+def get_locale() -> str:
     '''
     Determine the best match between supported languages
     '''
