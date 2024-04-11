@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 '''Basic Babel setup'''
 from flask import Flask, render_template, request, g
-from flask_babel import Babel, _
-
+from flask_babel import Babel, _, format_datetime
+import pytz
+import datetime
 
 app = Flask(__name__)
 babel = Babel(app)
@@ -37,6 +38,7 @@ def before_request():
     to make it be executed before all other functions.
     '''
     g.user = get_user()
+    setattr(g, 'time', format_datetime(datetime.datetime.now()))
 
 
 @app.route('/', strict_slashes=False)
@@ -47,14 +49,43 @@ def index() -> str:
 
 @babel.localeselector
 def get_locale() -> str:
-    '''
+    """
     Determine the best match between supported languages
-    '''
-    if 'locale' in request.args:
-        locale = request.args['locale']
-        if locale in app.config['LANGUAGES']:
-            return locale
+    """
+    locale_from_url = request.args.get('locale')
+    if locale_from_url and locale_from_url in app.config['LANGUAGES']:
+        return locale_from_url
+
+    if g.user:
+        user_locale = g.user.get('locale')
+        if user_locale and user_locale in app.config['LANGUAGES']:
+            return user_locale
+
+    locale_from_header = request.headers.get('locale', '')
+    if locale_from_header in app.config['LANGUAGES']:
+        return locale_from_header
+
     return request.accept_languages.best_match(app.config['LANGUAGES'])
+
+
+@babel.timezoneselector
+def get_timezone():
+    '''Support for timezones'''
+    try:
+        time_zone = request.args.get('timezone')
+        if time_zone:
+            pytz.timezone(time_zone)
+            return time_zone
+
+        if g.user:
+            user_timezone = g.user.get('timezone')
+            if user_timezone:
+                return user_timezone
+
+    except pytz.exceptions.UnknownTimeZoneError:
+        pass
+
+    return app.config['BABEL_DEFAULT_TIMEZONE']
 
 
 users = {
@@ -64,6 +95,5 @@ users = {
     4: {"name": "Teletubby", "locale": None, "timezone": "Europe/London"},
 }
 
-
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
